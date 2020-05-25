@@ -1,5 +1,4 @@
 import queue
-
 from ..workers import Worker
 from ..codes import WORKER_PROPERTIES
 
