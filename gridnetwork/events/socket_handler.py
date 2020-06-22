@@ -23,7 +23,7 @@ class SocketHandler(metaclass=Singleton):
         """ Create a mapping structure to establish a bond between a workerId and a socket descriptor.
             Args:
                 workerId: Uuid string used to identify workers.
-                socket: Socket decriptor that will be used to send/receive messages from this client.
+                socket: Socket descriptor that will be used to send/receive messages from this client.
         """
         if workerId not in self.connections:
             self.connections[workerId] = Worker(workerId, socket)
