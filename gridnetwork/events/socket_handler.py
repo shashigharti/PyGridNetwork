@@ -21,9 +21,13 @@ class SocketHandler(metaclass=Singleton):
 
     def new_connection(self, workerId: str, socket):
         """ Create a mapping structure to establish a bond between a workerId and a socket descriptor.
+
             Args:
-                workerId: Uuid string used to identify workers.
+                workerId: UUID string used to identify workers.
                 socket: Socket descriptor that will be used to send/receive messages from this client.
+
+            Returns:
+                Worker: a worker instance with the corresponding workerId
         """
         if workerId not in self.connections:
             self.connections[workerId] = Worker(workerId, socket)
@@ -37,14 +41,15 @@ class SocketHandler(metaclass=Singleton):
         """ Find the socket descriptor mapped by workerId and send them a message.
 
             Args:
-                workerId: Uiid used to identify and map workers.
-                message: Message that will be send.
+                workerId: UUID string used to identify and retrieve a worker.
+                message: Message to be send.
         """
         socket = self.connections.get(workerId, None)
         if socket:
             socket.send(message)
 
     def get(self, query):
+        """Retrieve a worker by its UUID string or its socket descriptor."""
         if isinstance(query, str):
             return self.connections.get(query, None)
         else:
@@ -55,6 +60,7 @@ class SocketHandler(metaclass=Singleton):
 
             Args:
                 socket: socket descriptor used to send/receive messages.
+
             Returns:
                 workerId: Worker id linked to that connection.
         """
@@ -71,12 +77,13 @@ class SocketHandler(metaclass=Singleton):
 
     @property
     def nodes(self) -> list:
+        """Return all the connected nodes as a list of tuples of (worker_id, worker)"""
         return list(self.connections.items())
 
     def __len__(self) -> int:
         """ Number of connections handled by this server.
 
             Returns:
-                length : number of connections handled by this server.
+                length: number of connections handled by this server.
         """
         return len(self.connections)

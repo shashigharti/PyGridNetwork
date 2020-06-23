@@ -9,6 +9,12 @@ socket_handler = SocketHandler()
 
 
 def update_node(message, socket):
+    """Update a node in the socket handler.
+
+    Args:
+        message (dict): The message containing the ID of the node to be updated.
+        socket: Socket descriptor of the node to be updated.
+    """
     try:
         worker = socket_handler.get(socket)
         worker.update_node_infos(message)
@@ -17,6 +23,15 @@ def update_node(message, socket):
 
 
 def register_node(message, socket):
+    """Register a new node to the socket handler.
+
+    Args:
+        message (dict): The message containing the ID of the node to be registered.
+        socket: Socket descriptor of the node to be registered.
+
+    Returns:
+        dict or None: Returns a status of success if the node is registered.
+    """
     try:
         time.sleep(1)
         node_id = message[MSG_FIELD.NODE_ID]
@@ -29,6 +44,12 @@ def register_node(message, socket):
 
 
 def forward(message, socket):
+    """Forward message to a specific node.
+
+        Args:
+            message (dict): The message which contains the ID of the node to be forwarded to.
+            socket: Socket descriptor of the node to which the message is forwarded.
+    """
     try:
         time.sleep(1)
         dest = message[MSG_FIELD.DESTINATION]
