@@ -2,14 +2,15 @@ from .nodes import db, GridNodes
 
 
 class NetworkManager:
+    """NetworkManager registers, deletes, and retrives grid nodes in the PyGrid network."""
     def __init__(self):
         pass
 
     def register_new_node(self, node_id, node_address):
-        """ Register new grid node at grid network.
+        """ Register a new grid node in the grid network.
             Args:
-                node_id (str) : Grid Node ID.
-                address (str) : Grid Node Address.
+                node_id (str): Grid Node ID.
+                node_address (str): Grid Node Address.
         """
         registered = False
         if node_id not in self.connected_nodes().keys():
@@ -20,10 +21,11 @@ class NetworkManager:
         return registered
 
     def delete_node(self, node_id, node_address):
-        """ Delete a grid node at grid network.
+        """ Delete a grid node in the grid network.
+
             Args:
-                node_id (str) : Grid Node ID.
-                address (str) : Grid Node Address.
+                node_id (str): Grid Node ID.
+                node_address (str): Grid Node Address.
         """
         deleted = False
         if node_id in self.connected_nodes().keys():
@@ -37,10 +39,10 @@ class NetworkManager:
         return deleted
 
     def connected_nodes(self):
-        """ Retrieve all grid nodes connected on grid network.
+        """ Retrieve all grid nodes connected in the grid network.
 
             Returns:
-                nodes_dict (Dictionary) : Dictionary{node_id:node_address} with connected grid nodes.
+                dict: Connected grid nodes in the key-value pair of node_id: node_address.
         """
         nodes = GridNodes.query.all()
         nodes_dict = {}

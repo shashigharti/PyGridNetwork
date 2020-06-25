@@ -10,7 +10,7 @@ import requests
 from flask import render_template, Response, request, current_app, send_file
 
 
-# All grid nodes registered at grid network will be stored here
+# Store all grid nodes that are registered in the grid network
 grid_nodes = {}
 SMPC_HOST_CHUNK = 4  # Minimum nodes required to host an encrypted model
 INVALID_JSON_FORMAT_MESSAGE = (
@@ -20,7 +20,7 @@ INVALID_JSON_FORMAT_MESSAGE = (
 
 @http.route("/join", methods=["POST"])
 def join_grid_node():
-    """ Register a new grid node at grid network.
+    """Register a new grid node at grid network.
         TODO: Add Authentication process.
     """
 
@@ -52,7 +52,7 @@ def join_grid_node():
 
 @http.route("/connected-nodes", methods=["GET"])
 def get_connected_nodes():
-    """ Get a list of connected nodes. """
+    """Return a response object containing a list of all the connected nodes."""
     grid_nodes = network_manager.connected_nodes()
     return Response(
         json.dumps({"grid-nodes": list(grid_nodes.keys())}),
@@ -63,7 +63,7 @@ def get_connected_nodes():
 
 @http.route("/delete-node", methods=["DELETE"])
 def delete_grid_node():
-    """ Delete a grid node at grid network"""
+    """Delete a grid node in the grid network."""
 
     response_body = {"message": None}
     status_code = None
@@ -94,9 +94,7 @@ def delete_grid_node():
 
 @http.route("/choose-encrypted-model-host", methods=["GET"])
 def choose_encrypted_model_host():
-    """ Used to choose grid nodes to host an encrypted model
-        PS: currently we perform this randomly
-    """
+    """Choose grid nodes to host an encrypted model (currently the choice is random)."""
     grid_nodes = network_manager.connected_nodes()
     n_replica = current_app.config["N_REPLICA"]
 
@@ -114,9 +112,7 @@ def choose_encrypted_model_host():
 
 @http.route("/choose-model-host", methods=["GET"])
 def choose_model_host():
-    """ Used to choose some grid node to host a model.
-        PS: Currently we perform this randomly.
-    """
+    """Choose n grid nodes to host a model (currently the choice is random)."""
     grid_nodes = network_manager.connected_nodes()
     n_replica = current_app.config["N_REPLICA"]
     if not n_replica:
@@ -125,11 +121,11 @@ def choose_model_host():
     model_id = request.args.get("model_id")
     hosts_info = None
 
-    # lookup the nodes already hosting this model to prevent hosting different model versions
+    # Lookup the nodes already hosting this model to prevent hosting different model versions
     if model_id:
         hosts_info = _get_model_hosting_nodes(model_id)
 
-    # no model id given or no hosting nodes found: randomly choose node
+    # No model id given or no hosting nodes found: randomly choose node
     if not hosts_info:
         hosts = random.sample(list(grid_nodes.keys()), n_replica)
         hosts_info = [(host, grid_nodes[host]) for host in hosts]
@@ -139,8 +135,9 @@ def choose_model_host():
 
 @http.route("/search-encrypted-model", methods=["POST"])
 def search_encrypted_model():
-    """ Search for an encrypted plan model on the grid network, if found,
-        returns host id, host address and SMPC workers infos.
+    """
+    Search for an encrypted plan model in the grid network and, if found,
+    return host id, host address, and SMPC workers information.
     """
 
     response_body = {"message": None}
@@ -182,7 +179,7 @@ def search_encrypted_model():
 
 @http.route("/search-model", methods=["POST"])
 def search_model():
-    """ Search for a plain text model on the grid network. """
+    """Search for a plain text model in the grid network."""
 
     response_body = {"message": None}
     status_code = None
@@ -193,7 +190,7 @@ def search_model():
         model_id = body["model_id"]
         match_nodes = _get_model_hosting_nodes(model_id)
 
-        # It returns a list[ (id, address) ]  with all grid nodes that have the desired model
+        # Return a list[(id, address)]  with all grid nodes that have the desired model
         response_body = match_nodes
         status_code = 200
 
@@ -211,7 +208,7 @@ def search_model():
 
 @http.route("/search-available-models", methods=["GET"])
 def available_models():
-    """ Get all available models on the grid network. Can be useful to know what models our grid network have. """
+    """Get all available models in the grid network."""
     grid_nodes = network_manager.connected_nodes()
     models = set()
     for node in grid_nodes:
@@ -222,13 +219,13 @@ def available_models():
         response = json.loads(response)
         models.update(set(response.get("models", [])))
 
-    # Return a list[ "model_id" ]  with all grid nodes
+    # Return a list["model_id"]  with all grid nodes
     return Response(json.dumps(list(models)), status=200, mimetype="application/json")
 
 
 @http.route("/search-available-tags", methods=["GET"])
 def available_tags():
-    """ Returns all available tags stored on grid nodes. Can be useful to know what dataset our grid network have. """
+    """Return all available dataset tags stored on grid nodes."""
     grid_nodes = network_manager.connected_nodes()
     tags = set()
     for node in grid_nodes:
@@ -239,13 +236,16 @@ def available_tags():
         response = json.loads(response)
         tags.update(set(response))
 
-    # Return a list[ "#tags" ]  with all grid nodes
+    # Return a list["#tags"]  with all grid nodes
     return Response(json.dumps(list(tags)), status=200, mimetype="application/json")
 
 
 @http.route("/search", methods=["POST"])
 def search_dataset_tags():
-    """ Search for information on all known nodes and return a list of the nodes that own it. """
+    """
+    Search for information on all known nodes and return a list of the nodes
+    containing the desired data tag.
+    """
 
     response_body = {"message": None}
     status_code = None
@@ -265,11 +265,11 @@ def search_dataset_tags():
             except requests.exceptions.ConnectionError:
                 continue
             response = json.loads(response)
-            # If contains
+
             if response["content"]:
                 match_grid_nodes.append((node, grid_nodes[node]))
 
-        # It returns a list[ (id, address) ]  with all grid nodes that have the desired data
+        # Return a list[(id, address)]  with all grid nodes that have the desired data
         response_body = match_grid_nodes
         status_code = 200
 
@@ -288,8 +288,11 @@ def search_dataset_tags():
 def _get_model_hosting_nodes(model_id):
     """ Search all nodes if they are currently hosting the model.
 
-    :param model_id: The model to search for
-    :return: An array of the nodes currently hosting the model
+    Args:
+        model_id: ID of the model.
+
+    Returns:
+        list: An array of the nodes currently hosting the model.
     """
     grid_nodes = network_manager.connected_nodes()
     match_nodes = []
