@@ -1,23 +1,19 @@
-from gevent import pywsgi
-from geventwebsocket.handler import WebSocketHandler
 import os
 
-# Flask imports
 from flask import Flask, Blueprint
 from flask_sockets import Sockets
-
-# SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+from gevent import pywsgi
+from geventwebsocket.handler import WebSocketHandler
 
 # Set routes/events
 ws = Blueprint(r"ws", __name__)
 http = Blueprint(r"http", __name__)
-
 # Set db client instance
 db = SQLAlchemy()
 
+from . import utils
 from . import routes, events
 
 DEFAULT_SECRET_KEY = "justasecretkeythatishouldputhere"
