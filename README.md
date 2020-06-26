@@ -4,11 +4,11 @@
     <a href="https://github.com/OpenMined/PyGridNetwork/actions?query=workflow%3ATests">
         <img src="https://github.com/OpenMined/PyGridNetwork/workflows/Tests/badge.svg"
             alt="Tests"/></a>
-    <a href="https://img.shields.io/github/license/OpenMined/GridNetwork">
-        <img src="https://img.shields.io/github/license/OpenMined/GridNetwork"
+    <a href="https://img.shields.io/github/license/OpenMined/PyGridNetwork">
+        <img src="https://img.shields.io/github/license/OpenMined/PyGridNetwork"
             alt="License"/></a>
-    <a href="https://img.shields.io/pypi/v/gridnetwork">
-        <img src="https://img.shields.io/pypi/v/gridnetwork"
+    <a href="https://img.shields.io/pypi/v/openmined.gridnetwork">
+        <img src="https://img.shields.io/pypi/v/openmined.gridnetwork"
             alt="Version"/></a>
     <a href="https://img.shields.io/opencollective/all/openmined">
         <img src="https://img.shields.io/opencollective/all/openmined"
@@ -21,16 +21,16 @@
             alt="Run on Google Cloud"/></a>
 </p> 
 
-# GridNetwork
+# PyGridNetwork
 
-GridNetwork is a network router used by the PyGrid platform. GridNetwork makes use of [WebRTC](https://webrtc.org/) to provide transparent connection between workers.
+PyGridNetwork is a network router used by the PyGrid platform. PyGridNetwork makes use of [WebRTC](https://webrtc.org/) to provide transparent connection between workers.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install gridnetwork.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install `openmined.gridnetwork`.
 
 ```bash
-pip install gridnetwork
+pip install openmined.gridnetwork
 ```
 
 ## Usage
@@ -54,7 +54,7 @@ Please make sure to update tests as appropriate.
 
 ## Contributors
 
-See the list of [contributors](https://github.com/OpenMined/GridNetwork/contributors) who participated in this project.
+See the list of [contributors](https://github.com/OpenMined/PyGridNetwork/contributors) who participated in this project.
 
 ## Support
 For support in using this library, please join the  [**#lib_grid_network**](https://openmined.slack.com/archives/C012QNKEY05) Slack channel. If you’d like to follow along with any code changes to the library, please join the [**#code_gridnetwork**](https://openmined.slack.com/archives/C012KAP6A22) Slack channel. [Click here to join our Slack community!](https://slack.openmined.org)

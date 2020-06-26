@@ -23,14 +23,14 @@ core_reqs, core_dependency_links = get_requirements("requirements.txt")
 
 
 setup(
-    name="gridnetwork",
+    name="openmined.gridnetwork",
     version="0.1.0",
     author="OpenMined",
     author_email="contact@openmined.org",
     description="A network router used by the PyGrid platform.",
     long_description=read("README.md"),
     long_description_content_type="text/markdown",
-    url="https://github.com/OpenMined/GridNetwork",
+    url="https://github.com/OpenMined/PyGridNetwork",
     maintainer="Benardi Nunes",
     maintainer_email="benardinunes@gmail.com",
     packages=find_packages(),
@@ -51,8 +51,8 @@ setup(
     entry_points={"console_scripts": ["raise_grid=gridnetwork:raise_grid"]},
     python_requires=">=3.5, <4",
     project_urls={
-        "Bug Reports": "https://github.com/OpenMined/GridNetwork/issues",
+        "Bug Reports": "https://github.com/OpenMined/PyGridNetwork/issues",
         "Funding": "https://opencollective.com/openmined",
-        "Source": "https://github.com/OpenMined/GridNetwork",
+        "Source": "https://github.com/OpenMined/PyGridNetwork",
     },
 )
