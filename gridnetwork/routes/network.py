@@ -96,10 +96,8 @@ def delete_grid_node():
 def choose_encrypted_model_host():
     """Choose grid nodes to host an encrypted model (currently the choice is random)."""
     grid_nodes = network_manager.connected_nodes()
-    n_replica = current_app.config["N_REPLICA"]
+    n_replica = current_app.config.get("N_REPLICA", 1)
 
-    if not n_replica:
-        n_replica = 1
     try:
         hosts = random.sample(list(grid_nodes.keys()), n_replica * SMPC_HOST_CHUNK)
         hosts_info = [(host, grid_nodes[host]) for host in hosts]
