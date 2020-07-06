@@ -13,13 +13,13 @@
     <a href="https://img.shields.io/opencollective/all/openmined">
         <img src="https://img.shields.io/opencollective/all/openmined"
             alt="OpenCollective"/></a>
-</p> 
+</p>
 
 <p align="center">
     <a href="https://deploy.cloud.run">
         <img src="https://deploy.cloud.run/button.svg"
             alt="Run on Google Cloud"/></a>
-</p> 
+</p>
 
 # PyGridNetwork
 
@@ -34,18 +34,37 @@ pip install openmined.gridnetwork
 ```
 
 ## Usage
-
-```python
-from gridnetwork import create_app, raise_grid
-
-
-if __name__ == "__main__":
-    app,server = raise_grid()
-else:
-    app = create_app()
+```bash
+python -m gridnetwork <arguments>
 ```
 
-* Once the package is installed the application gridnetwork can also be executed by running the command `raise_grid` 
+You can pass the arguments or use environment variables to set the gateway configs.  
+
+**Arguments**
+```
+required arguments:
+  --port PORT, -p PORT  Port number of the socket.io server, e.g. --port=8777.
+                        Default is os.environ.get('GRIDNETWORK_WS_PORT',
+                        None).
+
+optional arguments:
+  --host HOST           GridNerwork host, e.g. --host=0.0.0.0. Default is os.e
+                        nviron.get('GRIDNETWORK_WS_HOST','http://0.0.0.0').
+  --start_local_db      If this flag is used a SQLAlchemy DB URI is generated
+                        to use a local db.
+```
+
+**Environment Variables**
+- `GRIDNETWORK_WS_PORT` -  Port to run server on.
+- `GRIDNETWORK_WS_HOST` - The gridnetwork host
+- `DATABASE_URL` - The gateway database URL
+- `SECRET_KEY` - The secret key
+
+Example:
+
+```bash
+python -m gridnetwork --host=localhost --port=5000 --start_local_db
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

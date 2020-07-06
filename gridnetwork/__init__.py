@@ -1,9 +1,11 @@
+"""This package set up the app and server."""
+
 import os
 
-from flask import Flask, Blueprint
+from flask import Blueprint, Flask
+from flask_migrate import Migrate
 from flask_sockets import Sockets
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from gevent import pywsgi
 from geventwebsocket.handler import WebSocketHandler
 
@@ -13,31 +15,39 @@ http = Blueprint(r"http", __name__)
 # Set db client instance
 db = SQLAlchemy()
 
-from . import utils
-from . import routes, events
+from . import utils  # isort:skip
+from . import routes, events  # isort:skip
+
 
 DEFAULT_SECRET_KEY = "justasecretkeythatishouldputhere"
 __version__ = "0.1.0"
 
 
 def set_database_config(app, db_config=None, verbose=False):
-    """ Set configs to use SQL Alchemy library.
-        Args:
-            app: Flask application.
-            db_config : Dictionary containing SQLAlchemy configs for test purposes.
-            verbose : Level of flask application verbosity.
-        Returns:
-            app: Flask application.
-        Raises:
-            RuntimeError : If DATABASE_URL or db_config didn't initialized, RuntimeError exception will be raised.
+    """Set configs to use SQL Alchemy library.
+
+    Args:
+        app: Flask application.
+        db_config : Dictionary containing SQLAlchemy configs for test purposes.
+        verbose : Level of flask application verbosity.
+
+    Returns:
+        app: Flask application.
+
+    Raises:
+        RuntimeError : If DATABASE_URL or db_config didn't initialized, RuntimeError exception will be raised.
     """
     db_url = os.environ.get("DATABASE_URL")
     migrate = Migrate(app, db)
     if db_config is None:
-        db_url = "sqlite:///databaseGridNetwork.db"
-        app.config.from_mapping(
-            SQLALCHEMY_DATABASE_URI=db_url, SQLALCHEMY_TRACK_MODIFICATIONS=False
-        )
+        if db_url:
+            app.config.from_mapping(
+                SQLALCHEMY_DATABASE_URI=db_url, SQLALCHEMY_TRACK_MODIFICATIONS=False
+            )
+        else:
+            raise RuntimeError(
+                "Invalid database address: Set DATABASE_URL environment var or add db_config parameter at create_app method."
+            )
     else:
         app.config["SQLALCHEMY_DATABASE_URI"] = db_config["SQLALCHEMY_DATABASE_URI"]
         app.config["TESTING"] = (
@@ -52,7 +62,18 @@ def set_database_config(app, db_config=None, verbose=False):
     db.init_app(app)
 
 
-def create_app(debug=False, secret_key=DEFAULT_SECRET_KEY, db_config=None):
+def create_app(debug=False, secret_key=DEFAULT_SECRET_KEY, db_config=None) -> Flask:
+    """Create Flask app.
+
+    Args:
+        debug (bool): Enable debug mode
+        secret_key (str): Secret key application
+        db_config (Union[None, dict]): Database configuration
+
+    Returns:
+        app (Flask): flask application
+
+    """
     app = Flask(__name__)
     app.debug = debug
     app.config["SECRET_KEY"] = secret_key
@@ -73,8 +94,21 @@ def create_app(debug=False, secret_key=DEFAULT_SECRET_KEY, db_config=None):
     return app
 
 
-def raise_grid():
-    app = create_app()
-    server = pywsgi.WSGIServer(("", 5000), app, handler_class=WebSocketHandler)
+def raise_grid(host: str, port: int, **kwargs):
+    """Raise webserver application.
+
+    Args:
+        host (str): Hostname
+        port (int): Port number
+        **kwargs: Arbitrary keywords argument
+
+    Returns:
+        (tuple) tuple containing
+            app (Flask): flask application
+            server (pywsgi.WSGIServer): webserver
+
+    """
+    app = create_app(**kwargs)
+    server = pywsgi.WSGIServer((host, port), app, handler_class=WebSocketHandler)
     server.serve_forever()
     return app, server
