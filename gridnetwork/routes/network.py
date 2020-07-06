@@ -95,17 +95,29 @@ def delete_grid_node():
 @http.route("/choose-encrypted-model-host", methods=["GET"])
 def choose_encrypted_model_host():
     """Choose grid nodes to host an encrypted model (currently the choice is random)."""
-    grid_nodes = network_manager.connected_nodes()
-    n_replica = current_app.config.get("N_REPLICA", 1)
+    hosts_info = []
+    response_body = {"message": None}
+    status_code = None
 
     try:
+        grid_nodes = network_manager.connected_nodes()
+        n_replica = current_app.config.get("N_REPLICA", 1)
+
         hosts = random.sample(list(grid_nodes.keys()), n_replica * SMPC_HOST_CHUNK)
         hosts_info = [(host, grid_nodes[host]) for host in hosts]
+
+        response_body = hosts_info
+        status_code = 200
+
     # If grid network doesn't have enough grid nodes
     except ValueError:
-        hosts_info = []
+        response_body = hosts_info
+        status_code = 400        
+    except Exception as e:
+        response_body["message"] = str(e)
+        status_code = 500  # Internal Server Error
 
-    return Response(json.dumps(hosts_info), status=200, mimetype="application/json")
+    return Response(json.dumps(response_body), status=status_code, mimetype="application/json")
 
 
 @http.route("/choose-model-host", methods=["GET"])
