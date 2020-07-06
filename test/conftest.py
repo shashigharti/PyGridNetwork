@@ -1,10 +1,17 @@
 import pytest
+import os
 from gridnetwork import create_app
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def app():
-    return create_app()
+    BASEDIR = os.path.dirname(os.path.dirname(__file__))
+    db_path = "sqlite:///" + BASEDIR + "/databaseGridNetwork.db"
+
+    yield create_app(debug=True,
+                      db_config={"SQLALCHEMY_DATABASE_URI": db_path})
+
+    os.remove(BASEDIR + "/databaseGridNetwork.db")
 
 
 @pytest.fixture
